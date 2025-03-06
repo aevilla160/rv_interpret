@@ -456,10 +456,11 @@ int main() {
     string temp = funct7 + rs2 + rs1 + function3;
     imm = temp.substr(0, 1) + temp.substr(11, 8) + temp.substr(12, 1) +
           temp.substr(1, 10) + '0';
-
+  }
   operation = Operation(OpcodeStr, type, function3, funct7);
   //  cout << "Operation: " << Operation(OpcodeStr, type, function3) <<
   //  endl<<endl;
   PrintOutInstructions(OpcodeStr, type, rd, function3, rs1, rs2, funct7, imm, operation);
   return 0;
+
 }
