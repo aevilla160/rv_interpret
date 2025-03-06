@@ -7,6 +7,9 @@ using namespace std;
 
 
 //Funtion to determine RISC-V Opcode Type.
+//Function designed and implemented by Albert and Alex
+//Albert took lead of handling R and I type
+//Alex handled SB, S, U, and UJ type
 string OpcodeType(string opcodeStr) {
   const string R_Type[2] = {"0110011", "0111011"};
   const string I_Type[6] = {"0000011", "0001111", "0010011",
@@ -16,7 +19,7 @@ string OpcodeType(string opcodeStr) {
   const string U_Type[2] = {"0010111", "0110111"};
   const string UJ_Type[1] = {"1101111"};
 
-      // cout << "<Opcode is <Type>" << endl;
+  // cout << "<Opcode is <Type>" << endl;
   for (int i = 0; i < 2; i++) {
     if (opcodeStr == R_Type[i]) {
       return "R-Type";
@@ -56,7 +59,7 @@ int Rd(string rd, string type) {
   int dec_value = 0;
 
   // Initializing base value to 1, i.e 2^0
-  //FP Limitation
+  //May need to intialize to properly handle float values
   int base = 1;
 
   int temp = num;
@@ -118,6 +121,7 @@ int Funct7(string funct7) {
 
   return num;
 }
+//Function operation designed by Alex and Albert. Albert took lead on overall function implementation
 string Operation(string opcodeStr, string type, string funct3, string funct7) {
   if (type == "R-Type") {
     if (opcodeStr == "0110011") {
@@ -160,7 +164,7 @@ string Operation(string opcodeStr, string type, string funct3, string funct7) {
         return "sraw";
       }
     }
-
+    //Case designed and implemented by Albert
   } else if (type == "I-Type") {
     if (opcodeStr == "0000011") {
       if (funct3 == "000") {
@@ -236,7 +240,7 @@ string Operation(string opcodeStr, string type, string funct3, string funct7) {
         return "CSRRCI";
       }
     }
-
+    //Case designed and implemented by Alex
   } else if (type == "S-Type") {
     if (opcodeStr == "0100011") {
       if (funct3 == "000") {
@@ -249,6 +253,7 @@ string Operation(string opcodeStr, string type, string funct3, string funct7) {
         return "sd";
       }
     }
+    //Case designed and implemented by Alex
   } else if (type == "SB-Type") {
     if (opcodeStr == "1100011") {
       if (funct3 == "000") {
@@ -265,6 +270,7 @@ string Operation(string opcodeStr, string type, string funct3, string funct7) {
         return "bgeu";
       }
     }
+    //Case designed and implemented by Alex
   } else if (type == "UJ-Type" && opcodeStr == "1101111") {
     return "jal";
   } else if (type == "U-Type") {
@@ -276,7 +282,9 @@ string Operation(string opcodeStr, string type, string funct3, string funct7) {
   }
   return "";
 }
+//Imm function designed and implemented by Albert and Alex
 int Imm(string opcodeStr, string type, string funct3, string imm) {
+  //Implemted if by Albert
   if (type == "I-Type" && opcodeStr == "0010011" && funct3 == "111") {
 
     int num = stoi(imm);
@@ -295,7 +303,7 @@ int Imm(string opcodeStr, string type, string funct3, string imm) {
     // cout << endl << dec_value << endl;
     return dec_value;
   }
-
+//Alex implemented
   if (type == "S-Type" && opcodeStr == "0100011" && funct3 == "000") {
     int n = imm.length();
     if (imm[0] == '1') {
@@ -339,7 +347,7 @@ int Imm(string opcodeStr, string type, string funct3, string imm) {
 
     return -dec_value;
   }
-
+//Case designed and implemented by Alex
   if (type == "SB-Type" && opcodeStr == "1100011" && funct3 == "001") {
 
     int num = stoi(imm);
@@ -358,7 +366,7 @@ int Imm(string opcodeStr, string type, string funct3, string imm) {
     // cout << endl << dec_value << endl;
     return dec_value;
   }
-
+//Case designed and implemented by Alex inspired by Albert's work
   if (type == "UJ-Type" && opcodeStr == "1101111") {
 
     int num = stoi(imm);
@@ -379,6 +387,8 @@ int Imm(string opcodeStr, string type, string funct3, string imm) {
 
   return 0; // Provide a default return value if no condition is met
 }
+//Albert took lead on properly outputting the instructions
+//Alex heled with test cases and feature proof
 void PrintOutInstructions(string OpcodeStr, string type, string rd,
   string function3, string rs1, string rs2,
   string funct7, string imm, string operation) {
@@ -422,28 +432,22 @@ int main() {
   string BitString, OpcodeStr, type, operation, rs1, rs2, rd, imm, function3;
   // addition to accomdate R type having funct7
   string funct7;
-
-  // Input operation
+  //input handled below
   cout << "Enter the BitString: ";
-  // Input handling
   cin >> BitString;
   cout << endl;
   OpcodeStr = BitString.substr(25, 7);
   type = OpcodeType(OpcodeStr);
 
   if (type == "S-Type") {
-    // cout << "Instruction Type: S" << endl << endl;
   }
 
-  // Retrieve rd from bit string
   rd = BitString.substr(20, 5);
-  // funct3 from bit string
   function3 = BitString.substr(17, 3);
   rs1 = BitString.substr(12, 5);
   rs2 = BitString.substr(7, 5);
   funct7 = BitString.substr(0, 7);
-
-  // imm = BitString.substr(0, 12);
+  //Alex and Albert both took equal ownership of main function. 
   if (type == "I-Type") {
     imm = funct7 + rs2;
   } else if (type == "S-Type") {
